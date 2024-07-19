@@ -1,0 +1,100 @@
+import tkinter as tk
+from tkinter import messagebox, ttk
+
+class MyApplication(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("tuttyDev Purchase Order")
+        self.geometry("400x400")
+        
+        # to add style
+        self.style = ttk.Style(self)
+        self.style.configure('TButton', font=('Helvetica', 12))
+        self.style.configure('TLabel', font=('Helvetica', 12))
+        self.style.configure('TEntry', font=('Helvetica', 12))
+        
+        # Title Label
+        self.titleLabel = ttk.Label(self, text="Purchase Order", font=("Helvetica", 18, "bold"))
+        self.titleLabel.pack(pady=10)
+
+        # Frame for the Form
+        self.form_frame = ttk.Frame(self)
+        self.form_frame.pack(pady=10)
+
+        # Company Label
+        self.companyLabel = ttk.Label(self.form_frame, text="Company Name", font=("Helvetica", 14))
+        self.companyLabel.grid(row=0, column=0, columnspan=2, pady=5)
+
+        # Name
+        self.nameLabel = ttk.Label(self.form_frame, text="Name:")
+        self.nameLabel.grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        self.nameEntry = ttk.Entry(self.form_frame)
+        self.nameEntry.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+
+        # Product
+        self.productLabel = ttk.Label(self.form_frame, text="Product:")
+        self.productLabel.grid(row=2, column=0, padx=5, pady=5, sticky="e")
+        self.productEntry = ttk.Entry(self.form_frame)
+        self.productEntry.grid(row=2, column=1, padx=5, pady=5, sticky="w")
+
+        # Quantity
+        self.quantityLabel = ttk.Label(self.form_frame, text="Quantity:")
+        self.quantityLabel.grid(row=3, column=0, padx=5, pady=5, sticky="e")
+        self.quantityEntry = ttk.Entry(self.form_frame)
+        self.quantityEntry.grid(row=3, column=1, padx=5, pady=5, sticky="w")
+
+        # Price
+        self.priceLabel = ttk.Label(self.form_frame, text="Price:")
+        self.priceLabel.grid(row=4, column=0, padx=5, pady=5, sticky="e")
+        self.priceEntry = ttk.Entry(self.form_frame)
+        self.priceEntry.grid(row=4, column=1, padx=5, pady=5, sticky="w")
+
+        # Submit Button
+        self.submitButton = ttk.Button(self, text="Submit", command=self.submit_order)
+        self.submitButton.pack(pady=10)
+
+    def submit_order(self):
+        name = self.nameEntry.get()
+        product = self.productEntry.get()
+        quantity = self.quantityEntry.get()
+        price = self.priceEntry.get()
+        
+        if not name or not product or not quantity or not price:
+            messagebox.showerror("Error", "All fields are required.")
+            return
+        
+        total = self.calculate_total(quantity, price)
+
+        if total > 0:
+            self.display_order(name, product, quantity, price, total)
+        else:
+            messagebox.showerror("Error", "Invalid quantity or price.")
+
+    def calculate_total(self, quantity, price):
+        try:
+            quantity = int(quantity)
+            price = float(price)
+            total = quantity * price
+            return total
+        except ValueError:
+            return 0.0
+
+    def display_order(self, name, product, quantity, price, total):
+        self.nameEntry.delete(0, tk.END)
+        self.productEntry.delete(0, tk.END)
+        self.quantityEntry.delete(0, tk.END)
+        self.priceEntry.delete(0, tk.END)
+
+        orderInfo = f"Purchase Order: \n"
+        orderInfo += f"Name: {name}\n"
+        orderInfo += f"Product: {product}\n"
+        orderInfo += f"Quantity: {quantity}\n"
+        orderInfo += f"Price: {price}\n"
+        orderInfo += f"Total: {total}\n"
+
+        # Display the purchase order details in a new window or console
+        messagebox.showinfo("Purchase Order", orderInfo)
+
+if __name__ == "__main__":
+    app = MyApplication()
+    app.mainloop()
